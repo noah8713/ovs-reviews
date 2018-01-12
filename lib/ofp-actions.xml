@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions>
+  <h1>Introduction</h1>
+
+  <p>
+    This document aims to comprehensively document all of the OpenFlow actions
+    and instructions, both standard and non-standard, supported by Open
+    vSwitch, regardless of origin.  The document includes information of
+    interest to Open vSwitch users, such as the semantics of each supported
+    action and the syntax used by Open vSwitch tools, and to developers seeking
+    to build controllers and switches compatible with Open vSwitch, such as the
+    wire format for each supported message.
+  </p>
+
+  <h2>Actions</h2>
+
+  <p>
+    In this document, we define an <dfn>action</dfn> as an OpenFlow action,
+    which is a kind of command that specifies what to do with a packet.
+    Actions are used in OpenFlow flows to describe what to do when the flow
+    matches a packet, and in a few other places in OpenFlow.  Each version of
+    the OpenFlow specification defines standard actions, and beyond that many
+    OpenFlow switches, including Open vSwitch, implement extensions to the
+    standard.
+  </p>
+
+  <p>
+    OpenFlow groups actions in two ways: as an <dfn>action list</dfn> or an
+    <dfn>action set</dfn>, described below.
+  </p>
+
+  <h3>Action Lists</h3>
+
+  <p>
+    An <dfn>action list</dfn>, a concept present in every version of OpenFlow,
+    is simply an ordered sequence of actions.  The OpenFlow specifications
+    require a switch to execute actions within an action list in the order
+    specified, and to refuse to execute an action list entirely if it cannot
+    implement the actions in that order [OpenFlow 1.0, section 3.3], with one
+    exception: when an action list outputs multiple packets, the switch may
+    output the packets in an order different from that specified.  Usually,
+    this exception is not important, especially in the common case when the
+    packets are output to different ports.
+  </p>
+
+  <h3>Action Sets</h3>
+
+  <p>
+    OpenFlow 1.1 introduced the concept of an <dfn>action set</dfn>.  An action
+    set is also a sequence of actions, but the switch reorders the actions and
+    drops duplicates according to rules specified in the OpenFlow
+    specifications.  Because of these semantics, some actions cannot be
+    included in an action set.
+  </p>
+
+  <p>
+    Open vSwitch
+  </p>
+
+  <h2>Instructions</h2>
+
+  <p>
+    Every version of OpenFlow includes actions.  OpenFlow 1.1 introduced the
+    higher-level, related concept of <dfn>instructions</dfn>.  In OpenFlow 1.1
+    and later, actions within a flow are always encapsulated within an
+    instruction.  This document describes both actions and instructions.
+  </p>
+
+  <group title="Output">
+    <p>
+      These actions send a packet to a physical port or a controller.  A packet
+      that never encounters an output action on its trip through the Open
+      vSwitch pipeline is effectively dropped.  Because actions are executed in
+      order, a packet modification action that is not eventually followed by an
+      output action will not have an externally visible effect.
+    </p>
+
+    <action name="OUTPUT">
+      <syntax><var>port</var></syntax>
+      <syntax>output:<var>port</var></syntax>
+      <p>
+        Outputs the packet to OpenFlow port <var>port</var>.  If
+        <var>port</var> is the packet's input port, the packet is not output.
+        The <var>port</var> may be a numeric port number in the range 0 to
+        65,535, although Open vSwitch only assigns port numbers in the range 1
+        through 62,279 to ports.
+      </p>
+
+
+    </action>
+  </group>
+
+</actions>
